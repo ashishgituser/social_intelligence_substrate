@@ -1,0 +1,71 @@
+name: social-intelligence-substrate
+version: "1.0.0"
+description: >
+  A graph-native agent environment for evaluating social intelligence
+  through structured economic interactions in decentralised AI-infrastructure
+  resource markets.  Agents negotiate trades, form alliances, and navigate
+  adversarial participants to acquire target resources.
+
+author: Team Substrate
+license: MIT
+
+tags:
+  - openenv
+  - multi-agent
+  - social-intelligence
+  - resource-trading
+  - graph-based
+  - adversarial
+
+environment:
+  entrypoint: app.server:app
+  port: 7860
+  language: python
+  framework: fastapi
+
+observation:
+  type: object
+  description: >
+    Graph-based observation: visible agents with resources and trust scores,
+    pending trade proposals, active alliances, resource progress toward
+    task completion, and recent event history.
+
+action:
+  type: object
+  description: >
+    Structured economic actions: PROPOSE_TRADE, ACCEPT_TRADE, REJECT_TRADE,
+    FORM_ALLIANCE, BREAK_ALLIANCE, COMPLETE_TASK, OBSERVE.
+
+reward:
+  type: float
+  range: [-0.5, 1.0]
+  description: >
+    Dense reward: positive for successful trades and resource progress,
+    negative for exploitation, failed trades, and wasted steps.
+
+tasks:
+  - id: resource_acquisition
+    name: Resource Acquisition
+    difficulty: easy
+    description: Acquire target resources by trading with cooperative providers.
+    max_steps: 20
+
+  - id: coalition_building
+    name: Coalition Building
+    difficulty: medium
+    description: Form alliances and pool resources to meet a large infrastructure requirement.
+    max_steps: 30
+
+  - id: adversarial_resilience
+    name: Adversarial Resilience
+    difficulty: hard
+    description: Complete resource goals while detecting and avoiding malicious agents.
+    max_steps: 40
+
+  - id: market_manipulation
+    name: Market Manipulation
+    difficulty: expert
+    description: >
+      Navigate a hostile marketplace with colluding malicious agents,
+      detect coordinated fraud patterns, and still acquire resources.
+    max_steps: 50
