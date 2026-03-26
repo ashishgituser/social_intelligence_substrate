@@ -17,6 +17,7 @@ Endpoints:
 
 from __future__ import annotations
 
+import time
 import traceback
 from typing import List, Optional
 
@@ -64,6 +65,10 @@ app.add_middleware(
 # ---- In-memory state ----
 _env: Optional[SocialIntelligenceEnv] = None
 _last_grader: Optional[GraderResult] = None
+
+# ---- Rate limiting for /baseline (protects OpenAI API key) ----
+_baseline_last_call: float = 0.0
+_BASELINE_COOLDOWN: int = 60  # seconds between allowed calls
 
 
 # ==================================================================
@@ -233,6 +238,16 @@ def grader() -> GraderResult:
 @app.post("/baseline", response_model=List[BaselineResult])
 def baseline() -> List[BaselineResult]:
     """Run baseline inference on all tasks and return scores."""
+    global _baseline_last_call
+    now = time.time()
+    if now - _baseline_last_call < _BASELINE_COOLDOWN:
+        wait = int(_BASELINE_COOLDOWN - (now - _baseline_last_call))
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limited. Try again in {wait}s.",
+        )
+    _baseline_last_call = now
+
     from app.baseline import run_baseline_all_tasks
 
     try:
