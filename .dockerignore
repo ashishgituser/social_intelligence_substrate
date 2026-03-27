@@ -9,3 +9,6 @@ tests/
 validate.py
 *.md
 !README.md
+pyproject.toml
+uv.lock
+server/
