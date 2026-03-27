@@ -94,6 +94,54 @@ def root():
     }
 
 
+@app.get("/health")
+def health():
+    """Health check — required by openenv validate."""
+    return {"status": "healthy"}
+
+
+@app.get("/metadata")
+def metadata():
+    """Environment metadata — required by openenv validate."""
+    return {
+        "name": "Social Intelligence Substrate",
+        "description": (
+            "A graph-native OpenEnv environment for evaluating AI social "
+            "intelligence through structured economic interactions in "
+            "decentralised resource markets. Agents negotiate trades, "
+            "form alliances, and navigate adversarial participants."
+        ),
+        "version": "1.0.0",
+        "author": "Team Substrate",
+        "license": "MIT",
+        "tags": ["openenv", "multi-agent", "social-intelligence", "resource-trading"],
+    }
+
+
+@app.get("/schema")
+def schema():
+    """Action / observation / state JSON schemas — required by openenv validate."""
+    return {
+        "action": Action.model_json_schema(),
+        "observation": Observation.model_json_schema(),
+        "state": EnvironmentState.model_json_schema(),
+    }
+
+
+@app.post("/mcp")
+def mcp_endpoint():
+    """Minimal JSON-RPC 2.0 MCP endpoint — required by openenv validate."""
+    return {
+        "jsonrpc": "2.0",
+        "result": {
+            "name": "social-intelligence-substrate",
+            "version": "1.0.0",
+            "capabilities": ["reset", "step", "state", "tasks", "grader"],
+        },
+        "id": 1,
+    }
+
+
 # ==================================================================
 # OpenEnv core
 # ==================================================================
