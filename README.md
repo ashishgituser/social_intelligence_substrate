@@ -21,9 +21,14 @@ tags:
 
 ## Motivation
 
-Real-world AI systems increasingly operate in **multi-agent ecosystems** — negotiating resources, forming partnerships, and managing trust in environments with adversarial participants. Current benchmarks evaluate agents in isolation; this environment evaluates **social intelligence**: the ability to trade, collaborate, and avoid exploitation in a networked marketplace.
+Real-world AI systems increasingly operate in **multi-agent ecosystems** — negotiating resources with vendors, forming strategic partnerships, and managing trust in environments with adversarial or unreliable participants. This environment simulates a realistic **procurement and supply-chain negotiation** scenario:
 
-The environment models a **decentralised AI-infrastructure resource market** where agents must acquire compute, data, storage, and API credits through structured interactions with honest, selfish, and malicious counterparts.
+- **What humans actually do:** IT procurement managers negotiate compute, storage, and data access from multiple vendors daily, evaluating vendor reliability, detecting fraud, and forming long-term partnerships.
+- **What this environment tests:** An AI agent must acquire target resources (compute, data, storage, API credits) from a marketplace of vendors with varying reliability — honest, selfish (overpricing), and malicious (fraud/non-delivery).
+
+This maps directly to real-world tasks like **vendor management, procurement negotiation, supply-chain coordination, and marketplace fraud detection** — not games or toys.
+
+Current benchmarks evaluate agents in isolation; this environment evaluates **social intelligence**: the ability to trade, collaborate, and avoid exploitation in a networked marketplace with adversarial participants.
 
 ---
 
@@ -193,10 +198,20 @@ docker build -t social-intelligence-substrate .
 docker run -p 7860:7860 social-intelligence-substrate
 ```
 
+### Inference Script (mandatory)
+
+```bash
+# Uses OPENAI_API_KEY, HF_TOKEN, API_BASE_URL, MODEL_NAME env vars
+OPENAI_API_KEY=sk-... python inference.py
+
+# Or with HF Router
+HF_TOKEN=hf_... MODEL_NAME=meta-llama/Meta-Llama-3-8B-Instruct python inference.py
+```
+
 ### With LLM Baseline
 
 ```bash
-OPENAI_API_KEY=sk-... python -m app.baseline
+OPENAI_API_KEY=sk-... python -m app.baseline --llm
 # or
 OPENAI_API_KEY=sk-... docker run -e OPENAI_API_KEY -p 7860:7860 social-intelligence-substrate
 ```
@@ -261,6 +276,8 @@ app/
 ├── grader.py        # Deterministic scoring (0.0–1.0)
 ├── server.py        # FastAPI endpoints
 └── baseline.py      # Heuristic + LLM inference agents
+inference.py           # MANDATORY inference script (root)
+validate.py            # Pre-submission validation script
 tests/
 ├── test_graph.py        # Graph engine tests
 ├── test_environment.py  # Environment step/reset/state tests
