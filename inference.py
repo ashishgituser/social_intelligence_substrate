@@ -366,6 +366,8 @@ def run_single_task(
     total_reward = 0.0
     steps = 0
 
+    print(f"[START] task={task_id}", flush=True)
+
     while not env.done:
         obs_dict = obs.model_dump()
         action = agent.decide(obs_dict)
@@ -373,9 +375,12 @@ def run_single_task(
         obs = result.observation
         total_reward += result.reward.value
         steps += 1
+        print(f"[STEP] step={steps} reward={result.reward.value}", flush=True)
 
     metrics = env._compute_metrics()
     gr = grade_episode(task_id, metrics, env._check_task_complete())
+
+    print(f"[END] task={task_id} score={gr.score:.4f} steps={steps}", flush=True)
 
     return BaselineResult(
         task_id=task_id,
