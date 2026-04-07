@@ -147,8 +147,10 @@ def mcp_endpoint():
 # ==================================================================
 
 @app.post("/reset", response_model=Observation)
-def reset(req: ResetRequest) -> Observation:
+def reset(req: Optional[ResetRequest] = None) -> Observation:
     global _env, _last_grader
+    if req is None:
+        req = ResetRequest()
     try:
         _env = SocialIntelligenceEnv(task_id=req.task_id, seed=req.seed)
     except ValueError as exc:
