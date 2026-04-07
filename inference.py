@@ -365,22 +365,37 @@ def run_single_task(
 
     total_reward = 0.0
     steps = 0
+    rewards: List[float] = []
+    success = False
 
-    print(f"[START] task={task_id}", flush=True)
+    print(f"[START] task={task_id} env=social-intelligence-substrate model={MODEL_NAME}", flush=True)
 
-    while not env.done:
-        obs_dict = obs.model_dump()
-        action = agent.decide(obs_dict)
-        result = env.step(action)
-        obs = result.observation
-        total_reward += result.reward.value
-        steps += 1
-        print(f"[STEP] step={steps} reward={result.reward.value}", flush=True)
+    try:
+        while not env.done:
+            obs_dict = obs.model_dump()
+            action = agent.decide(obs_dict)
+            result = env.step(action)
+            obs = result.observation
+            reward_val = result.reward.value
+            total_reward += reward_val
+            rewards.append(reward_val)
+            steps += 1
+            done_str = str(env.done).lower()
+            action_str = action.action_type.value
+            error_str = "null"
+            print(f"[STEP] step={steps} action={action_str} reward={reward_val:.2f} done={done_str} error={error_str}", flush=True)
 
-    metrics = env._compute_metrics()
-    gr = grade_episode(task_id, metrics, env._check_task_complete())
-
-    print(f"[END] task={task_id} score={gr.score:.4f} steps={steps}", flush=True)
+        metrics = env._compute_metrics()
+        gr = grade_episode(task_id, metrics, env._check_task_complete())
+        success = gr.score >= 0.5
+        score = gr.score
+    except Exception:
+        score = 0.0
+        gr = None
+        raise
+    finally:
+        rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+        print(f"[END] success={str(success).lower()} steps={steps} score={score:.2f} rewards={rewards_str}", flush=True)
 
     return BaselineResult(
         task_id=task_id,
