@@ -4,7 +4,8 @@ WORKDIR /app
 
 # Install dependencies first (cache-friendly layer)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir openenv-core>=0.2.0 && \
+    pip install --no-cache-dir networkx==3.2.1 python-dotenv==1.0.0 httpx==0.25.2 pytest==7.4.4
 
 # Copy application code
 COPY . .
